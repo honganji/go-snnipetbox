@@ -27,7 +27,7 @@ func main() {
 	addr := getEnv("ADDR", ":4000")
 	dsn := getEnv("DSN", "root:123@/snippetbox")
 
-	db, err := openDB(dsn)
+	db, err := openDB(dsn + "?parseTime=true")
 	if err != nil {
 		logger.Error("unable to connect to database", slog.String("dsn", dsn), slog.String("error", err.Error()))
 		os.Exit(1)
