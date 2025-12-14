@@ -41,3 +41,9 @@ The MySQL DSN follows this format:
 ```
 [username]:[password]@[protocol]([host]:[port])/[database]
 ```
+
+## Contributing
+
+### Commit Messages
+
+This project follows commit message prefix conventions. See [docs/devops/commit-message.md](docs/devops/commit-message.md) for the full list of prefixes.

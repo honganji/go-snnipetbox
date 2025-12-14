@@ -45,3 +45,9 @@ MySQLのDSNは以下の形式に従います：
 例：
 - `web:pass@/snippetbox` - デフォルトソケットを使用したローカル接続
 - `web:pass@tcp(localhost:3306)/snippetbox` - localhostへのTCP接続
+
+## コントリビューション
+
+### コミットメッセージ
+
+このプロジェクトはコミットメッセージのプレフィックス規則に従っています。詳細は [docs/devops/commit-message.md](../devops/commit-message.md) を参照してください。
