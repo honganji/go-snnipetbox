@@ -9,34 +9,25 @@ import (
 	"github.com/honganji/go-snippetbox/internal/models"
 )
 
+// renders the home page with the latest snippets
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
+	// get the latest snippets from the database
 	snippets, err := app.snippets.Latest()
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
-	for _, snippet := range snippets {
-		fmt.Fprintf(w, "%+v\n", snippet)
-	}
-	// files := []string{
-	// 	"./ui/html/base.tmpl.html",
-	// 	"./ui/html/pages/home.tmpl.html",
-	// 	"./ui/html/partials/nav.tmpl.html",
-	// }
-	// ts, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	app.serverError(w, r, err)
-	// 	return
-	// }
-	// err = ts.ExecuteTemplate(w, "base", nil)
-	// if err != nil {
-	// 	app.logger.Error(err.Error(), slog.String("method", r.Method), slog.String("url", r.URL.String()))
-	// 	app.serverError(w, r, err)
-	// }
+	// initialize a new template data struct
+	data := app.newTemplateData(r)
+	data.Snippets = snippets
+	// render the home page template, passing in the latest snippets
+	app.render(w, r, http.StatusOK, "home.tmpl.html", data)
 }
 
+// renders the snippet view page for a given ID
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
+	// get the snippet by its id
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
 		http.NotFound(w, r)
@@ -51,13 +42,19 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	fmt.Fprintf(w, "%+v", snippet)
+	data := app.newTemplateData(r)
+	data.Snippet = snippet
+
+	// render the snippet view page template, passing in the snippet data
+	app.render(w, r, http.StatusOK, "view.tmpl.html", data)
 }
 
+// renders the snippet creation form
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Display a form for creating a new snippet..."))
 }
 
+// process the form submission
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
 	title := "0 snail"
 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
