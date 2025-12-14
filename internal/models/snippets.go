@@ -7,11 +7,11 @@ import (
 )
 
 type Snippet struct {
-	ID       int
-	Title    string
-	Contetnt string
-	Created  time.Time
-	Expires  time.Time
+	ID      int
+	Title   string
+	Content string
+	Created time.Time
+	Expires time.Time
 }
 
 type SnippetModel struct {
@@ -39,7 +39,7 @@ func (m *SnippetModel) Get(id int) (Snippet, error) {
     WHERE expires > UTC_TIMESTAMP() AND id = ?`
 	row := m.DB.QueryRow(stmt, id)
 	var s Snippet
-	err := row.Scan(&s.ID, &s.Title, &s.Contetnt, &s.Created, &s.Expires)
+	err := row.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Snippet{}, ErrNoRecord
@@ -62,7 +62,7 @@ func (m *SnippetModel) Latest() ([]Snippet, error) {
 	var snippets []Snippet
 	for rows.Next() {
 		var s Snippet
-		err := rows.Scan(&s.ID, &s.Title, &s.Contetnt, &s.Created, &s.Expires)
+		err := rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
 		if err != nil {
 			return nil, err
 		}
