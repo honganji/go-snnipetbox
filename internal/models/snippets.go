@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Snippet represents a snippet record in the database
 type Snippet struct {
 	ID      int
 	Title   string
@@ -14,6 +15,7 @@ type Snippet struct {
 	Expires time.Time
 }
 
+// SnippetModel wraps a sql.DB connection pool
 type SnippetModel struct {
 	DB *sql.DB
 }

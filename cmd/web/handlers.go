@@ -11,6 +11,8 @@ import (
 	"github.com/honganji/go-snippetbox/internal/models"
 )
 
+// return the latest snippets
+// for now, this just writes a placeholder message
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
 	snippets, err := app.snippets.Latest()
@@ -38,7 +40,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// }
 }
 
+// returns the snippet for a given ID
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
+	// get the snippet by its id
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
 		http.NotFound(w, r)
@@ -53,6 +57,8 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	// load html files and parse templates
 	files := []string{
 		"./ui/html/base.tmpl.html",
 		"./ui/html/pages/view.tmpl.html",
@@ -63,6 +69,7 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 		return
 	}
+	// with the snippet data, write the html to the response writer
 	data := templateData{
 		Snippet: snippet,
 	}
@@ -73,10 +80,12 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// return a form for creating a new snippet
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Display a form for creating a new snippet..."))
 }
 
+// process the form submission
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
 	title := "0 snail"
 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"

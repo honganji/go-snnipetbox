@@ -2,6 +2,7 @@ package main
 
 import "net/http"
 
+// routes sets up the application routes and returns a http.ServeMux
 func (app *application) routes() *http.ServeMux {
 	mux := http.NewServeMux()
 
