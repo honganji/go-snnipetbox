@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 )
 
 // serverError logs the error and sends a generic 500 Internal Server Error response to the user
@@ -40,4 +41,11 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 	}
 	w.WriteHeader(status)
 	buf.WriteTo(w)
+}
+
+// create new TemplateData
+func (app *application) newTemplateData(r *http.Request) templateData {
+	return templateData{
+		CurrentYear: time.Now().Year(),
+	}
 }

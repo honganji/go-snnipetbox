@@ -18,8 +18,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 		return
 	}
+	// initialize a new template data struct
+	data := app.newTemplateData(r)
+	data.Snippets = snippets
 	// render the home page template, passing in the latest snippets
-	app.render(w, r, http.StatusOK, "home.tmpl.html", templateData{Snippets: snippets})
+	app.render(w, r, http.StatusOK, "home.tmpl.html", data)
 }
 
 // renders the snippet view page for a given ID
@@ -39,9 +42,11 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	data := app.newTemplateData(r)
+	data.Snippet = snippet
 
 	// render the snippet view page template, passing in the snippet data
-	app.render(w, r, http.StatusOK, "view.tmpl.html", templateData{Snippet: snippet})
+	app.render(w, r, http.StatusOK, "view.tmpl.html", data)
 }
 
 // renders the snippet creation form
