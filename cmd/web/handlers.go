@@ -3,44 +3,26 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
-	"log/slog"
 	"net/http"
 	"strconv"
 
 	"github.com/honganji/go-snippetbox/internal/models"
 )
 
-// return the latest snippets
-// for now, this just writes a placeholder message
+// renders the home page with the latest snippets
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
+	// get the latest snippets from the database
 	snippets, err := app.snippets.Latest()
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
-	files := []string{
-		"./ui/html/base.tmpl.html",
-		"./ui/html/pages/home.tmpl.html",
-		"./ui/html/partials/nav.tmpl.html",
-	}
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-	data := templateData{
-		Snippets: snippets,
-	}
-	err = ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.logger.Error(err.Error(), slog.String("method", r.Method), slog.String("url", r.URL.String()))
-		app.serverError(w, r, err)
-	}
+	// render the home page template, passing in the latest snippets
+	app.render(w, r, http.StatusOK, "home.tmpl.html", templateData{Snippets: snippets})
 }
 
-// returns the snippet for a given ID
+// renders the snippet view page for a given ID
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	// get the snippet by its id
 	id, err := strconv.Atoi(r.PathValue("id"))
@@ -58,29 +40,11 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// load html files and parse templates
-	files := []string{
-		"./ui/html/base.tmpl.html",
-		"./ui/html/pages/view.tmpl.html",
-		"./ui/html/partials/nav.tmpl.html",
-	}
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-	// with the snippet data, write the html to the response writer
-	data := templateData{
-		Snippet: snippet,
-	}
-	err = ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.logger.Error(err.Error(), slog.String("method", r.Method), slog.String("url", r.URL.String()))
-		app.serverError(w, r, err)
-	}
+	// render the snippet view page template, passing in the snippet data
+	app.render(w, r, http.StatusOK, "view.tmpl.html", templateData{Snippet: snippet})
 }
 
-// return a form for creating a new snippet
+// renders the snippet creation form
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Display a form for creating a new snippet..."))
 }

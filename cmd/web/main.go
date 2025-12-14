@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"html/template"
 	"log/slog"
 	"net/http"
 	"os"
@@ -13,8 +14,9 @@ import (
 
 // application struct holds the application-wide dependencies
 type application struct {
-	logger   *slog.Logger
-	snippets *models.SnippetModel
+	logger        *slog.Logger
+	snippets      *models.SnippetModel
+	templateCache map[string]*template.Template
 }
 
 func main() {
@@ -35,12 +37,20 @@ func main() {
 	// ensure the database connection pool is closed before the main function exits
 	defer db.Close()
 
+	// initialize the template cache
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		logger.Error("unable to create template cache", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
 	// initialize a new application instance
 	app := &application{
 		logger: logger,
 		snippets: &models.SnippetModel{
 			DB: db,
 		},
+		templateCache: templateCache,
 	}
 
 	// start the HTTP server
