@@ -20,7 +20,7 @@ func (app *application) serverError(w http.ResponseWriter, r *http.Request, err 
 }
 
 // clientError sends a specific status code and corresponding description to the user
-func (app *application) clientError(w http.ResponseWriter, r *http.Request, status int) {
+func (app *application) clientError(w http.ResponseWriter, status int) {
 	http.Error(w, http.StatusText(status), status)
 }
 
