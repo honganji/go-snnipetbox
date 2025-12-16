@@ -11,7 +11,6 @@ import (
 
 // renders the home page with the latest snippets
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Go")
 	// get the latest snippets from the database
 	snippets, err := app.snippets.Latest()
 	if err != nil {
