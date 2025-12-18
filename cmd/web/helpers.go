@@ -2,10 +2,13 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/go-playground/form/v4"
 )
 
 // serverError logs the error and sends a generic 500 Internal Server Error response to the user
@@ -20,7 +23,7 @@ func (app *application) serverError(w http.ResponseWriter, r *http.Request, err 
 }
 
 // clientError sends a specific status code and corresponding description to the user
-func (app *application) clientError(w http.ResponseWriter, r *http.Request, status int) {
+func (app *application) clientError(w http.ResponseWriter, status int) {
 	http.Error(w, http.StatusText(status), status)
 }
 
@@ -48,4 +51,21 @@ func (app *application) newTemplateData(r *http.Request) templateData {
 	return templateData{
 		CurrentYear: time.Now().Year(),
 	}
+}
+
+// decode helper function to parse form data into a struct
+func (app *application) decodePostForm(r *http.Request, dst any) error {
+	err := r.ParseForm()
+	if err != nil {
+		return err
+	}
+	err = app.formDecoder.Decode(dst, r.PostForm)
+	if err != nil {
+		var invalidDecoderError *form.InvalidDecoderError
+		if errors.As(err, &invalidDecoderError) {
+			panic(err)
+		}
+		return err
+	}
+	return nil
 }
