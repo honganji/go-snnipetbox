@@ -2,33 +2,33 @@
 
 {{define "main"}}
 <form action='/snippet/create' method='POST'>
-    {{with .Form}}
+    <!-- Include the CSRF token -->
+    <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
     <div>
         <label>Title:</label>
-        {{with .FieldErrors.title}}
+        {{with .Form.FieldErrors.title}}
             <label class='error'>{{.}}</label>
         {{end}}
-        <input type='text' name='title' value='{{.Title}}'>
+        <input type='text' name='title' value='{{.Form.Title}}'>
     </div>
     <div>
         <label>Content:</label>
-        {{with .FieldErrors.content}}
+        {{with .Form.FieldErrors.content}}
             <label class='error'>{{.}}</label>
         {{end}}
-        <textarea name='content'>{{.Content}}</textarea>
+        <textarea name='content'>{{.Form.Content}}</textarea>
     </div>
     <div>
         <label>Delete in:</label>
-        {{with .FieldErrors.expires}}
+        {{with .Form.FieldErrors.expires}}
             <label class='error'>{{.}}</label>
         {{end}}
-        <input type='radio' name='expires' value='365' {{if (eq .Expires 365)}}checked{{end}}> One Year
-        <input type='radio' name='expires' value='7' {{if (eq .Expires 7)}}checked{{end}}> One Week
-        <input type='radio' name='expires' value='1' {{if (eq .Expires 1)}}checked{{end}}> One Day
+        <input type='radio' name='expires' value='365' {{if (eq .Form.Expires 365)}}checked{{end}}> One Year
+        <input type='radio' name='expires' value='7' {{if (eq .Form.Expires 7)}}checked{{end}}> One Week
+        <input type='radio' name='expires' value='1' {{if (eq .Form.Expires 1)}}checked{{end}}> One Day
     </div>
     <div>
         <input type='submit' value='Publish snippet'>
     </div>
-    {{end}}
 </form>
 {{end}}
