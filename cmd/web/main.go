@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"html/template"
 	"log/slog"
@@ -69,11 +70,17 @@ func main() {
 		sessionManager: sessionManager,
 	}
 
+	// initialize TLS configuration
+	tlsConfig := &tls.Config{
+		MinVersion: tls.VersionTLS12,
+	}
+
 	// start the HTTP server
 	srv := &http.Server{
-		Addr:     addr,
-		Handler:  app.routes(),
-		ErrorLog: slog.NewLogLogger(logger.Handler(), slog.LevelError),
+		Addr:      addr,
+		Handler:   app.routes(),
+		ErrorLog:  slog.NewLogLogger(logger.Handler(), slog.LevelError),
+		TLSConfig: tlsConfig,
 	}
 	logger.Info("starting server", slog.String("addr", addr))
 	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
