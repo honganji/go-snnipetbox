@@ -3,15 +3,15 @@ package main
 import (
 	"net/http"
 
+	"github.com/honganji/go-snippetbox/ui"
 	"github.com/justinas/alice"
 )
 
 // routes sets up the application routes and returns a http.Handler.
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
-
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
+	// static files
+	mux.Handle("GET /static/", http.FileServer(http.FS(ui.Files)))
 
 	// Unprotected routes
 	dynamic := alice.New(app.sessionManager.LoadAndSave, preventCSRF, app.authenticate)
